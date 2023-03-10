@@ -7,6 +7,7 @@ from rps.utilities.misc import *
 from rps.utilities.controllers import *
 import time
 from scipy.spatial import Voronoi, voronoi_plot_2d
+from matplotlib.artist import Artist
 
 
 # c_v is value for grid cell c_v=np.zeros(2,N)
@@ -147,7 +148,7 @@ iterations = 1000
 #while True:
 for k in range(iterations):
     L=completeGL(N)
-
+    r.axes.show()
     dxi = np.zeros((2, N))
     # Get poses of agents
     x = r.get_poses()
@@ -262,7 +263,16 @@ for k in range(iterations):
     #L=completeGL(N)
     #print(L)
     #dxi = single_integrator_position_controller(x_si, c_v_array[:2][:])
-    
+
+
+    #spent far too long trying to remove the old iterations of the voronoi plot could not figure it out, going to leave it here commented and you can uncomment and see voronoi for homogenous assumptions
+    # v=Voronoi(x_si.T)
+    # voronoi_plot_2d(v,ax=r.axes)
+
+
+
+
+
     for robot in range(N):
         current_x=x_si[0,robot]
         current_y=x_si[1,robot]
