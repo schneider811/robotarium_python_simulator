@@ -14,10 +14,12 @@ from matplotlib.artist import Artist
 # w = np.zeros(N,1)
 
 def get_sensor(j,q):
-     x=1
+     return 1
 
 N=10
+#weights = [1,1,1,1,1,1,1,1,1,1]
 weights = [2,1,1,1,1,2,1,1,1,1]
+# weights=[1]*N
 
 initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0],[0.2, -0.6, 0],[-0.75, -0.1, 0],[-1, 0, 0],[-0.8, -0.25, 0],[1.3, -0.4, 0]])
 r = robotarium.Robotarium(number_of_robots=N,sim_in_real_time=True,initial_conditions=initial_conditions[0:N].T)
@@ -32,6 +34,8 @@ sensor_health = []
 # robot_by_sensor=[1,1,1,1,1,1,1,1,1,1]
 # hi1=[[1,1,1,1,1],[1,1,1,1,1]]
 # wi1=[[1,1,1,1,1],[1,1,1,1,1]]
+# numbots1=10
+# numbots2=0
 
 #Scenario 1
 
@@ -84,10 +88,10 @@ x_si = uni_to_si_states(x)
 #python is nx2
 
 w = [0]*N
-h=[0]*N
+hg=0
 c_v= [[0 for col in range(3)] for row in range(N)]
 
-print(c_v)
+#print(c_v)
 
 counting = 0
 
@@ -95,7 +99,7 @@ x_min_robotarium = -1.6
 y_min_robotarium = -1
 x_max_robotarium = 1.6
 y_max_robotarium = 1
-res=.2
+res=.1
 
 #print(r.boundaries)
 
@@ -113,7 +117,7 @@ count=0
 
 robot_marker_size_m = 0.1
 
-print(range(5))
+
 
 marker_size_robot = determine_marker_size(r, robot_marker_size_m)
 font_size = determine_font_size(r,0.05)
@@ -148,7 +152,7 @@ iterations = 1000
 #while True:
 for k in range(iterations):
     L=completeGL(N)
-    r.axes.show()
+
     dxi = np.zeros((2, N))
     # Get poses of agents
     x = r.get_poses()
@@ -186,29 +190,7 @@ for k in range(iterations):
     #                     c_v[min_index][1] += (yi * sensor_value)
     #                     w[min_index] += sensor_value
 
-    if len(sensors) == 2 and numbots1 == 5 and numbots2 == 5:
-        for types in sensors:
-            for xi in np.arange(x_min_robotarium,x_max_robotarium,res):
-                    for yi in np.arange(y_min_robotarium,y_max_robotarium,res):
-                        sensor_value = 1
-                        distances1 = np.zeros(numbots1)
-                        distances2 = np.zeros(numbots2)
-                        if types == 1:
-                            for robot in range(numbots1):
-                                distances1[robot] =  np.sqrt(np.square(xi - x_si[0,robot])*weights[robot] + np.square(yi - x_si[1,robot])*weights[robot] ) 
-                        if types == 2:
-                            for robot in range(numbots2):
-                                distances2[robot] =  np.sqrt(np.square(xi - x_si[0,robot+5])*weights[robot+5] + np.square(yi - x_si[1,robot+5])*weights[robot+5] ) 
-                        counting=0
-                        min_index1 = np.argmin(distances1)
-                        min_index2 = np.argmin(distances2)
-                        c_v[min_index1][0] += (xi * sensor_value)
-                        c_v[min_index1][1] += (yi * sensor_value)
-                        w[min_index1] += sensor_value
 
-                        c_v[min_index2+5][0] += (xi * sensor_value)
-                        c_v[min_index2+5][1] += (yi * sensor_value)
-                        w[min_index2+5] += sensor_value
     # # was what i initially did to figure out how to separate out the robots based on sensor it did not work as well as above lines  this looks to work decently well
     # if len(sensors) == 2 and numbots1 == 5 and numbots2 == 5:
     #     for types in sensors:
@@ -242,23 +224,30 @@ for k in range(iterations):
     #                         c_v[min_index+5][1] += (yi * sensor_value)
     #                         w[min_index+5] += sensor_value  
     #minimum and maximum x and y points for robotarium, resolution.
-    if len(sensors) == 1: 
-        for xi in np.arange(x_min_robotarium,x_max_robotarium,res):
-                for yi in np.arange(y_min_robotarium,y_max_robotarium,res):
-                    sensor_value = .5
-                    distances = np.zeros((N))
-                    for robot in range(N):  
-                            distances[robot] =  np.sqrt(np.square(xi - x_si[0,robot])*weights[robot] + np.square(yi - x_si[1,robot])*weights[robot] ) 
-                    min_index = np.argmin(distances)
-                    #print(min_index)
-                    #c_v is value for grid cell c_v=np.zeros(2,N)
-                    #w = np.zeros(N,1)
-                    c_v[min_index][0] += (xi * sensor_value)
-                    c_v[min_index][1] += (yi * sensor_value)
-                    w[min_index] += sensor_value
+    # if len(sensors) == 1: 
+    #     for xi in np.arange(x_min_robotarium,x_max_robotarium,res):
+    #             for yi in np.arange(y_min_robotarium,y_max_robotarium,res):
+    #                 sensor_value = 1
+    #                 distances = np.zeros((N))
+    #                 for robot in range(N):  
+    #                     distances[robot] =  (np.square(xi - x_si[0,robot]) + np.square(yi - x_si[1,robot]))-weights[robot]
+    #                     # if not w[robot] == 0:
+    #                     #     hg += np.sqrt(np.square(x_si[0,robot]-(c_v[robot][0]/(w[robot]))) + np.square(x_si[1,i]-(c_v[robot][1]/(w[robot]) ) )) 
+    #                 min_index = np.argmin(distances)
+    #                 #print(min_index)
+    #                 #c_v is value for grid cell c_v=np.zeros(2,N)
+    #                 #w = np.zeros(N,1)
+    #                 c_v[min_index][0] += (xi * sensor_value)
+    #                 c_v[min_index][1] += (yi * sensor_value)
+                    
+    #                 w[min_index] += sensor_value
+                    # for robot in range(N):
+                    #     if not w[robot] == 0:
+                    #         hg += np.sqrt(np.square(x_si[0,robot]-(c_v[robot][0]/(w[robot]))) + np.square(x_si[1,i]-(c_v[robot][1]/(w[robot]) ) ))
+                    #         print(hg)
                     #print(w)
 #     #print(w)
-    
+    #print(w)
     a=1
     #L=completeGL(N)
     #print(L)
@@ -268,10 +257,58 @@ for k in range(iterations):
     #spent far too long trying to remove the old iterations of the voronoi plot could not figure it out, going to leave it here commented and you can uncomment and see voronoi for homogenous assumptions
     # v=Voronoi(x_si.T)
     # voronoi_plot_2d(v,ax=r.axes)
+    if len(sensors) == 2 and numbots1 == 5 and numbots2 == 5:
+       for types in sensors:
+            w = [0]*N
+            c_v= [[0 for col in range(3)] for row in range(N)]            
+            for xi in np.arange(x_min_robotarium,x_max_robotarium,res):
+                    for yi in np.arange(y_min_robotarium,y_max_robotarium,res):
+                        sensor_value = 1
+                        distances1 = np.zeros(numbots1)
+                        distances2 = np.zeros(numbots2)
+#                        if types == 1:
+                        for robot in range(numbots1):
+                                distances1[robot] =  (np.square(xi - x_si[0,robot]) + np.square(yi - x_si[1,robot])) - weights[robot]
+#                        if types == 2:
+                        for robot in range(numbots2):
+                                distances2[robot] =  (np.square(xi - x_si[0,robot+5]) + np.square(yi - x_si[1,robot+5]) ) - weights[robot+5]
+                        counting=0
+                        min_index1 = np.argmin(distances1)
+                        min_index2 = np.argmin(distances2)
+                        c_v[min_index1][0] += (xi * sensor_value)
+                        c_v[min_index1][1] += (yi * sensor_value)
+                        w[min_index1] += sensor_value
 
+                        c_v[min_index2+5][0] += (xi * sensor_value)
+                        c_v[min_index2+5][1] += (yi * sensor_value)
+                        w[min_index2+5] += sensor_value
+            #do hg here?
+    distances3=[0]*N
+    x_sample=0
+    y_sample=0
+    # for j in sensors:
+    #     for i in range(len(robot_by_sensor)):
+    hg=0
 
+    for xi in np.arange(x_min_robotarium,x_max_robotarium,res):
+        for yi in np.arange(y_min_robotarium,y_max_robotarium,res):
+            for j in sensors:
+                for i in range(len(robot_by_sensor)):
+            #degrade with the square of the distance (same as example in paper)
+                        #if j == robot_by_sensor[i]:
+                            distances3[i] =  (np.square(xi - x_si[0,i]) + np.square(yi - x_si[1,i])) - weights[i]
+                k = np.argmin(distances1)
+                density=get_sensor(1,[x_sample,y_sample])
+                hg += ((np.square(x_si[0,k]-xi) + np.square(x_si[1,k]-yi ))-weights[k])*density
 
+    print(hg)
 
+    #         # print("c_y :",c_y)
+    # for j in sensors:
+    #     for i in range(len(robot_by_sensor)):
+    #         #degrade with the square of the distance (same as example in paper)
+    #         if j == robot_by_sensor[i]:
+    #             hg += np.sqrt(np.square(x_si[0,i]-c_v[robot][0]/(w[robot])) + np.square(x_si[1,i]-(c_v[robot][1]/(w[robot]) ) ))
 
     for robot in range(N):
         current_x=x_si[0,robot]
@@ -280,19 +317,26 @@ for k in range(iterations):
             c_x = c_v[robot][0]/(w[robot])
             c_y = c_v[robot][1]/(w[robot])
             # print("c_x :",c_x)
-            # print("c_y :",c_y)
+            # # print("c_y :",c_y)
+            # for j in sensors:
+            #     for i in range(len(robot_by_sensor)):
+            #         #degrade with the square of the distance (same as example in paper)
+            #         if j == robot_by_sensor[i]:
+            #             hg += np.sqrt(np.square(x_si[0,i]-c_v[robot][0]/(w[robot])) + np.square(x_si[1,i]-(c_v[robot][1]/(w[robot]) ) ))
+            #print(w)
         else:
             c_x = c_y = 0
         dxi[:,robot] = [a*(c_x - current_x), a*(c_y - current_y )] 
-
+    #print(hg)
     #Equation 4 paper 1
 
     # for j in sensors:
-    #      for i in range(robot_by_sensor):
+    #      for i in range(len(robot_by_sensor)):
     #           #degrade with the square of the distance (same as example in paper)
     #           if j == robot_by_sensor[i]:
-    #                w[i] = 
-
+    #                hg += np.sqrt(np.square(x_si[0,i]-(c_v[robot][0]/(w[robot]))) + np.square(x_si[1,i]-(c_v[robot][1]/(w[robot]) ) ))
+    #print(hg)
+    hg=0
 
     # Create safe control inputs (i.e., no collisions)
     #dxi = si_barrier_cert(dxi, x_si)
