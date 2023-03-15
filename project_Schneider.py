@@ -13,6 +13,12 @@ import pandas as pd
 from copy import deepcopy
 
 
+#this function is used to normalize the weight array
+
+def normalize(arr,t_min,t_max):
+    s = sum(l)
+    return [i/s for i in l]
+
 break_out_flag=False
 
 # c_v is value for grid cell c_v=np.zeros(2,N)
@@ -90,21 +96,6 @@ def get_sensor(j,q):
 
 
 #scenario 4
-N=5
-gain=.5
-sensors=[1,2]
-robot_by_sensor=[1,1,1,2,2]
-numbots1=5
-numbots2=5
-binary_robot_by_sensor=[[1,1,1,0,0],[0,0,1,1,1]]
-n1=[1,2,3]
-n2=[3,2,1]
-hi1=[[1,1,1,0,0],[0,0,1,1,2]]
-wi1=[[1,1,1,0,0],[0,0,1,2,2]]
-initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0]])
-
-
-# #Scenario 5
 # N=5
 # gain=.5
 # sensors=[1,2]
@@ -113,10 +104,23 @@ initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -
 # numbots2=5
 # binary_robot_by_sensor=[[1,1,1,0,0],[0,0,1,1,1]]
 # n1=[1,2,3]
-# n2=[3,4,5]
-# hi1=[[1,1,2,0,0],[0,0,1,1,1]]
-# wi1=[[1,2,1,0,0],[0,0,1,1,1]]
+# n2=[3,2,1]
+# hi1=[[1,1,1,0,0],[0,0,1,1,2]]
+# wi1=[[1,1,1,0,0],[0,0,1,2,2]]
 # initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0]])
+
+
+# #Scenario 5
+N=5
+gain=.5
+sensors=[1,2]
+robot_by_sensor=[1,1,1,2,2]
+binary_robot_by_sensor=[[1,1,1,0,0],[0,0,1,1,1]]
+n1=[1,2,3]
+n2=[3,4,5]
+hi1=[[1,1,2,0,0],[0,0,1,1,1]]
+wi1=[[1,2,1,0,0],[0,0,1,1,1]]
+initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0]])
 
 #r = robotarium.Robotarium(number_of_robots=N, show_figure=True, initial_conditions=initial_conditions, sim_in_real_time=False)
 
@@ -327,12 +331,19 @@ for iteration in range(iterations):
                 sum_of_neighbors_matrix[robots][k]+=hi1[k][robots]-hi1[k][neighbors]
     #print(sum_of_neighbors)
         sum_of_neighbors_array=np.array(sum_of_neighbors_matrix, dtype=int)
+        #print(w)
+        if w[robots] == 0:
+            w[robots]=1
         if not w[robots] == 0:  
             weight_array[robots]=(gain/(2*w[robots]))*sum_of_neighbors_array[robots]
-    #print("weight array ",weight_array)
-    # weight_array=gain/(2*density)*sum_of_neighbors_array
-    
+            #print(weight_array)
+    weight_array=np.vstack(weight_array) #to make array not a list of arrays
 
+    #print(weight_array)
+    print("weight array ",weight_array)
+    # weight_array=gain/(2*density)*sum_of_neighbors_array
+    #weight_array=normalize(weight_array,0,1)
+    
     #print('wi1',wi1)
     for sensors_num in range(len(sensors)):
         for robot in range(N):
@@ -341,10 +352,10 @@ for iteration in range(iterations):
             # else:
                 wi1[sensors_num][robot] = wi1[sensors_num][robot]+ weight_array[robot][sensors_num]
                 wijminushij[sensors_num][robot]=wi1[sensors_num][robot]-hi1[sensors_num][robot]
+    print(wi1)
+    #normalize weight array#################################
 
-    #normalize weight array
-
-    print('wi1 after changing',wi1)
+    #print('wi1 after changing',wi1)
     values_to_write.append(deepcopy(wi1))
     values_to_write.append(deepcopy(wijminushij))
     cwij=[c_v[robot][0]/(w[robot]),c_v[robot][1]/(w[robot])]
