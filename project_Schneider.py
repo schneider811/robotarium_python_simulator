@@ -48,79 +48,84 @@ def get_sensor(j,q):
 # numbots2=0
 # initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0],[0.2, -0.6, 0],[-0.75, -0.1, 0],[-1, 0, 0],[-0.8, -0.25, 0],[1.3, -0.4, 0]])
 
+scenario_num = 5
 
 #Scenario 1
-# N=10
-# sensors=[1,2]
-# robot_by_sensor=[1,1,1,1,1,2,2,2,2,2]
-# numbots1=5
-# numbots2=5
-# binary_robot_by_sensor=[[1,1,1,1,1,0,0,0,0,0],[0,0,0,0,0,1,1,1,1,1]]
-# n1=[1,2,3,4,5]
-# n2=[6,7,8,9,10]
-# hi1=[[1,1,1,1,1,0,0,0,0,0],[0,0,0,0,0,1,1,1,1,1]]
-# wi1=[[1,1,1,1,1,0,0,0,0,0],[0,0,0,0,0,1,1,1,1,1]]
-# initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0],[0.2, -0.6, 0],[-0.75, -0.1, 0],[-1, 0, 0],[-0.8, -0.25, 0],[1.3, -0.4, 0]])
-# gain=.2 #.1 gain causes HG to get pretty stable to be ~400
+if scenario_num == 1:
+    N=10
+    sensors=[1,2]
+    robot_by_sensor=[1,1,1,1,1,2,2,2,2,2]
+    numbots1=5
+    numbots2=5
+    binary_robot_by_sensor=[[1,1,1,1,1,0,0,0,0,0],[0,0,0,0,0,1,1,1,1,1]]
+    n1=[1,2,3,4,5]
+    n2=[6,7,8,9,10]
+    hi1=[[1,1,1,1,1,0,0,0,0,0],[0,0,0,0,0,1,1,1,1,1]]
+    wi1=[[1,1,1,1,1,0,0,0,0,0],[0,0,0,0,0,1,1,1,1,1]]
+    initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0],[0.2, -0.6, 0],[-0.75, -0.1, 0],[-1, 0, 0],[-0.8, -0.25, 0],[1.3, -0.4, 0]])
+    gain=.2 #.1 gain causes HG to get pretty stable to be ~400
 
 #scenario 2
-
-# N=10
-# gain=.3
-# sensors=[1,2]
-# robot_by_sensor=[1,1,1,1,1,2,2,2,2,2]
-# numbots1=5
-# numbots2=5
-# binary_robot_by_sensor=[[1,1,1,1,1,0,0,0,0,0],[0,0,0,0,0,1,1,1,1,1]]
-# n1=[1,2,3,4,5]
-# n2=[6,7,8,9,10]
-# hi1=[[1,1,2,1,1,0,0,0,0,0],[0,0,0,0,0,2,1,1,1,2]]
-# wi1=[[2,1,1,1,1,0,0,0,0,0],[0,0,0,0,0,2,1,1,1,1]]
-# initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0],[0.2, -0.6, 0],[-0.75, -0.1, 0],[-1, 0, 0],[-0.8, -0.25, 0],[1.3, -0.4, 0]])
+if scenario_num == 2:
+    N=10
+    gain=.3
+    sensors=[1,2]
+    robot_by_sensor=[1,1,1,1,1,2,2,2,2,2]
+    numbots1=5
+    numbots2=5
+    binary_robot_by_sensor=[[1,1,1,1,1,0,0,0,0,0],[0,0,0,0,0,1,1,1,1,1]]
+    n1=[1,2,3,4,5]
+    n2=[6,7,8,9,10]
+    hi1=[[1,1,2,1,1,0,0,0,0,0],[0,0,0,0,0,2,1,1,1,2]]
+    wi1=[[2,1,1,1,1,0,0,0,0,0],[0,0,0,0,0,2,1,1,1,1]]
+    initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0],[0.2, -0.6, 0],[-0.75, -0.1, 0],[-1, 0, 0],[-0.8, -0.25, 0],[1.3, -0.4, 0]])
 
 
 
 # #Scenario 3
-# N=10
-# gain=.1
-# sensors=[1,2,3,4,5]
-# robot_by_sensor=[1,1,2,2,3,3,4,4,5,5]
-# numbots1=5
-# numbots2=5
-# binary_robot_by_sensor=[[1,1,0,0,0,0,0,0,0,0],[0,0,1,1,0,0,0,0,0,0],[0,0,0,0,1,1,0,0,0,0],[0,0,0,0,0,0,1,1,0,0],[0,0,0,0,0,0,0,0,1,1]]
-# n1=[1,2,3,4,5]
-# n2=[6,7,8,9,10]
-# hi1=[[1,2,0,0,0,0,0,0,0,0],[0,0,2,1,0,0,0,0,0,0],[0,0,0,0,1,2,0,0,0,0],[0,0,0,0,0,0,2,1,0,0],[0,0,0,0,0,0,0,0,1,2]]
-# wi1=[[1,2,0,0,0,0,0,0,0,0],[0,0,2,1,0,0,0,0,0,0],[0,0,0,0,1,2,0,0,0,0],[0,0,0,0,0,0,2,1,0,0],[0,0,0,0,0,0,0,0,1,2]]
-# initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0],[0.2, -0.6, 0],[-0.75, -0.1, 0],[-1, 0, 0],[-0.8, -0.25, 0],[1.3, -0.4, 0]])
+if scenario_num == 3:
+    N=10
+    gain=.1
+    sensors=[1,2,3,4,5]
+    robot_by_sensor=[1,1,2,2,3,3,4,4,5,5]
+    numbots1=5
+    numbots2=5
+    binary_robot_by_sensor=[[1,1,0,0,0,0,0,0,0,0],[0,0,1,1,0,0,0,0,0,0],[0,0,0,0,1,1,0,0,0,0],[0,0,0,0,0,0,1,1,0,0],[0,0,0,0,0,0,0,0,1,1]]
+    n1=[1,2,3,4,5]
+    n2=[6,7,8,9,10]
+    hi1=[[1,2,0,0,0,0,0,0,0,0],[0,0,2,1,0,0,0,0,0,0],[0,0,0,0,1,2,0,0,0,0],[0,0,0,0,0,0,2,1,0,0],[0,0,0,0,0,0,0,0,1,2]]
+    wi1=[[1,2,0,0,0,0,0,0,0,0],[0,0,2,1,0,0,0,0,0,0],[0,0,0,0,1,2,0,0,0,0],[0,0,0,0,0,0,2,1,0,0],[0,0,0,0,0,0,0,0,1,2]]
+    initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0],[0.2, -0.6, 0],[-0.75, -0.1, 0],[-1, 0, 0],[-0.8, -0.25, 0],[1.3, -0.4, 0]])
 
 
 #scenario 4
-# N=5
-# gain=.5
-# sensors=[1,2]
-# robot_by_sensor=[1,1,1,2,2]
-# numbots1=5
-# numbots2=5
-# binary_robot_by_sensor=[[1,1,1,0,0],[0,0,1,1,1]]
-# n1=[1,2,3]
-# n2=[3,2,1]
-# hi1=[[1,1,1,0,0],[0,0,1,1,2]]
-# wi1=[[1,1,1,0,0],[0,0,1,2,2]]
-# initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0]])
+if scenario_num == 4:
+    N=5
+    gain=.5
+    sensors=[1,2]
+    robot_by_sensor=[1,1,1,2,2]
+    numbots1=5
+    numbots2=5
+    binary_robot_by_sensor=[[1,1,1,0,0],[0,0,1,1,1]]
+    n1=[1,2,3]
+    n2=[3,2,1]
+    hi1=[[1,1,1,0,0],[0,0,1,1,2]]
+    wi1=[[1,1,1,0,0],[0,0,1,2,2]]
+    initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0]])
 
 
 # #Scenario 5
-N=5
-gain=.5
-sensors=[1,2]
-robot_by_sensor=[1,1,1,2,2]
-binary_robot_by_sensor=[[1,1,1,0,0],[0,0,1,1,1]]
-n1=[1,2,3]
-n2=[3,4,5]
-hi1=[[1,1,2,0,0],[0,0,1,1,1]]
-wi1=[[1,2,1,0,0],[0,0,1,1,1]]
-initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0]])
+if scenario_num == 5:
+    N=5
+    gain=.5
+    sensors=[1,2]
+    robot_by_sensor=[1,1,1,2,2]
+    binary_robot_by_sensor=[[1,1,1,0,0],[0,0,1,1,1]]
+    n1=[1,2,3]
+    n2=[3,4,5]
+    hi1=[[1,1,2,0,0],[0,0,1,1,1]]
+    wi1=[[1,2,1,0,0],[0,0,1,1,1]]
+    initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0]])
 
 #r = robotarium.Robotarium(number_of_robots=N, show_figure=True, initial_conditions=initial_conditions, sim_in_real_time=False)
 
@@ -332,19 +337,23 @@ for iteration in range(iterations):
     #print(sum_of_neighbors)
         sum_of_neighbors_array=np.array(sum_of_neighbors_matrix, dtype=int)
         #print(w)
+        # if w[robots] == 0:
+        #     w[robots]=1
         if w[robots] == 0:
-            w[robots]=1
+            weight_array[robots]=np.array([0]*len(sensors),dtype=int)
         if not w[robots] == 0:  
             weight_array[robots]=(gain/(2*w[robots]))*sum_of_neighbors_array[robots]
             #print(weight_array)
     weight_array=np.vstack(weight_array) #to make array not a list of arrays
 
     #print(weight_array)
-    print("weight array ",weight_array)
+    #print("weight array ",weight_array)
     # weight_array=gain/(2*density)*sum_of_neighbors_array
     #weight_array=normalize(weight_array,0,1)
-    
+    #wi1=np.array(wi1)
+    #print(wi1)
     #print('wi1',wi1)
+    
     for sensors_num in range(len(sensors)):
         for robot in range(N):
             # if weight_array[robot][sensors_num]<0:
@@ -352,7 +361,7 @@ for iteration in range(iterations):
             # else:
                 wi1[sensors_num][robot] = wi1[sensors_num][robot]+ weight_array[robot][sensors_num]
                 wijminushij[sensors_num][robot]=wi1[sensors_num][robot]-hi1[sensors_num][robot]
-    print(wi1)
+    #print(wi1)
     #normalize weight array#################################
 
     #print('wi1 after changing',wi1)
