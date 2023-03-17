@@ -48,7 +48,7 @@ def get_sensor(j,q):
 # numbots2=0
 # initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0],[0.2, -0.6, 0],[-0.75, -0.1, 0],[-1, 0, 0],[-0.8, -0.25, 0],[1.3, -0.4, 0]])
 
-scenario_num = 5
+scenario_num = 3
 
 #Scenario 1
 if scenario_num == 1:
@@ -81,9 +81,8 @@ if scenario_num == 2:
     n1=[1,2,3,4,5]
     n2=[6,7,8,9,10]
     hi1=[[1,1,2,1,1,0,0,0,0,0],[0,0,0,0,0,2,1,1,1,2]]
-    wi1=[[2,1,1,1,1,0,0,0,0,0],[0,0,0,0,0,2,1,1,1,1]]
-    #initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0],[0.2, -0.6, 0],[-0.75, -0.1, 0],[-1, 0, 0],[-0.8, -0.25, 0],[1.3, -0.4, 0]])    
-    initial_conditions = np.asarray([[1.25, 0.25, 0],[0, .5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0],[0.2, -0.6, 0],[-0.75, -0.1, 0],[-1, 0, 0],[-0.8, -0.25, 0],[1.3, -0.4, 0]])
+    wi1=[[1,1,1,1,1,0,0,0,0,0],[0,0,0,0,0,1,1,1,1,1]]
+    initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0],[0.2, -0.6, 0],[-0.75, -0.1, 0],[-1, 0, 0],[-0.8, -0.25, 0],[1.3, -0.4, 0]])    
 
 
 
@@ -101,7 +100,7 @@ if scenario_num == 3:
     n2=[6,7,8,9,10]
     hi1=[[1,2,0,0,0,0,0,0,0,0],[0,0,2,1,0,0,0,0,0,0],[0,0,0,0,1,2,0,0,0,0],[0,0,0,0,0,0,2,1,0,0],[0,0,0,0,0,0,0,0,1,2]]
     wi1=[[1,2,0,0,0,0,0,0,0,0],[0,0,2,1,0,0,0,0,0,0],[0,0,0,0,1,2,0,0,0,0],[0,0,0,0,0,0,2,1,0,0],[0,0,0,0,0,0,0,0,1,2]]
-    initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0],[0.2, -0.6, 0],[-0.75, -0.1, 0],[-1, .4, 0],[-0.8, -0.25, 0],[1.3, -0.4, 0]])
+    initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0],[0.2, -0.6, 0],[-0.75, -0.1, 0],[-1,0, 0],[-0.8, -0.25, 0],[1.3, -0.4, 0]])
 
 
 #scenario 4
@@ -115,8 +114,8 @@ if scenario_num == 4:
     binary_robot_by_sensor=[[1,1,1,0,0],[0,0,1,1,1]]
     n1=[1,2,3]
     n2=[3,2,1]
-    hi1=[[1,1,1,0,0],[0,0,1,1,2]]
-    wi1=[[1,1,1,0,0],[0,0,1,2,2]]
+    hi1=[[1,1,1,0,0],[0,0,1,1,1]]
+    wi1=[[1,1,2,0,0],[0,0,1,2,2]]
     initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0]])
 
 
@@ -131,8 +130,8 @@ if scenario_num == 5:
     binary_robot_by_sensor=[[1,1,1,0,0],[0,0,1,1,1]]
     n1=[1,2,3]
     n2=[3,4,5]
-    hi1=[[1,1,2,0,0],[0,0,1,1,1]]
-    wi1=[[1,2,1,0,0],[0,0,1,1,1]]
+    hi1=[[1,1,2,0,0],[0,0,1,2,1]]
+    wi1=[[1,1,1,0,0],[0,0,1,1,1]]
     initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0]])
 
 #r = robotarium.Robotarium(number_of_robots=N, show_figure=True, initial_conditions=initial_conditions, sim_in_real_time=False)
@@ -252,14 +251,17 @@ for iteration in range(iterations):
                     c_v[min_index][0] += (xi * sensor_value)
                     c_v[min_index][1] += (yi * sensor_value)
                     w[min_index] += sensor_value
-
+    
 #     #print(w)
     #print(w)
     a=1
     #L=completeGL(N)
     #print(L)
     #dxi = single_integrator_position_controller(x_si, c_v_array[:2][:])
-
+    x_sample=0
+    y_sample=0
+    #print(c_v)
+    hg=0
 
     if len(sensors) >1:
         #for types in sensors:
@@ -268,48 +270,45 @@ for iteration in range(iterations):
         for xi in np.arange(x_min_robotarium,x_max_robotarium,res):
                 for yi in np.arange(y_min_robotarium,y_max_robotarium,res):
                     sensor_value = 1
-                    distances = np.zeros((len(sensors),N))
+     #               distances = np.zeros((len(sensors),N))
                     for k in range(len(sensors)):
+                        distances = np.zeros((len(sensors),N))
+                        distances2=[0]*N
                         for robot in range(N):
                             if binary_robot_by_sensor[k][robot]==1:
                                 distances[k][robot] =  (np.square(xi - x_si[0,robot]) + np.square(yi - x_si[1,robot])) - wi1[k][robot]
+                                distances2[robot] = (np.square(xi - x_si[0,robot]) + np.square(yi - x_si[1,robot])) - wi1[k][robot]
+
                         min_index = np.argmin(distances[k])
                         # if min_index == 1:
                         #     print(min_index)
                         c_v[min_index][0] += (xi * sensor_value)
                         c_v[min_index][1] += (yi * sensor_value)
-                        # print(xi)
-                        # print(yi)
-                        # print(min_index)
-                        # print(wi1)
-                        # print(w)
-                        w[min_index] += sensor_value
-        x_sample=0
-        y_sample=0
-        #print(c_v)
-        hg=0
-        #Equation 4 from paper 1 while calculating over weighted voronoi cell (lines 277-278)
-        for xi in np.arange(x_min_robotarium,x_max_robotarium,res):
-            for yi in np.arange(y_min_robotarium,y_max_robotarium,res):
-                    for k in range(len(sensors)):
-                        distances3=[0]*N
-                        for robot in range(N):
-                                    if binary_robot_by_sensor[k][robot] == 1:
-                                        distances3[robot] = (np.square(xi - x_si[0,robot]) + np.square(yi - x_si[1,robot])) - wi1[k][robot]
-                                #    print(distances3)
-                        # mask = (distances3[:] > 0)
-                        k2=np.argmin(distances3[distances3 != 0])
+                        k2=np.argmin(distances2[distances2 != 0])
                         density=get_sensor(1,[x_sample,y_sample])
-                        #hg += ((np.square(x_si[0,k2]-xi) + np.square(x_si[1,k2]-yi ))-wi1[k][k2])*density
-                        #hg += ((np.square(x_si[0,k2]-(c_v[k2][0]/w[k2])) + np.square(x_si[1,k2]-(c_v[k2][1]/w[k2]) ))-wi1[k][k2])*density
-                        hg += distances3[k2]*density
+                        hg += .5*distances2[k2]*density
+                        w[min_index] += sensor_value
+
+        #Equation 4 from paper 1 while calculating over weighted voronoi cell (lines 277-278)
+        # for xi in np.arange(x_min_robotarium,x_max_robotarium,res):
+        #     for yi in np.arange(y_min_robotarium,y_max_robotarium,res):
+        #             for k in range(len(sensors)):
+        #                 distances3=[0]*N
+        #                 for robot in range(N):
+        #                             if binary_robot_by_sensor[k][robot] == 1:
+        #                                 distances3[robot] = (np.square(xi - x_si[0,robot]) + np.square(yi - x_si[1,robot])) - wi1[k][robot]
+        #                         #    print(distances3)
+        #                 # mask = (distances3[:] > 0)
+        #                 k2=np.argmin(distances3[distances3 != 0])
+        #                 density=get_sensor(1,[x_sample,y_sample])
+        #                 hg += .5*distances3[k2]*density
 #LINES 279 swapped to 280
 #
 #
 #
 #
-    print(hg)
-
+    #print(hg)
+    print(c_v[7][0],c_v[7][1])
 
     L=completeGL(N)
     #Equation 8 paper 2 is below, c_v is centroid of weighted voronoi
@@ -319,6 +318,7 @@ for iteration in range(iterations):
         if not w[robot] == 0:
             c_x = c_v[robot][0]/(w[robot])
             c_y = c_v[robot][1]/(w[robot])
+        
         else:
             c_x = c_y = 0
         # print("c_x",c_x)
@@ -337,7 +337,7 @@ for iteration in range(iterations):
     #print(w)
     for robot in range(N):
         #sum_of_neighbors=0
-        z=topological_neighbors(L,robot) ##THIS IS WHERE THE ERROR WAS FROM WEDNESDAY
+        z=topological_neighbors(L,robot) 
         #print(z)
         for k in range(len(sensors)):
             for neighbors in z:
@@ -355,7 +355,9 @@ for iteration in range(iterations):
         if not w[robot] == 0:  
             weight_array[robot]=(gain/(2*w[robot]))*sum_of_neighbors_array[robot]
             #print(weight_array)
+    #print(weight_array)
     weight_array=np.vstack(weight_array) #to make array not a list of arrays
+    #print(weight_array)
     # print("w8",w[8])
     # print("sum of nuym array 8",sum_of_neighbors_array[8])
     #print(weight_array)
@@ -394,10 +396,10 @@ for iteration in range(iterations):
     cwij=[0]*N
     
     #print('wi1 after changing',wi1)
-    for i in range(len(sensors)):
-        values_to_write.append(deepcopy(wi1[i]))
-    for i in range(len(sensors)):
-        values_to_write.append(deepcopy(wijminushij[i]))
+    # for i in range(len(sensors)):
+    values_to_write.append(deepcopy(wi1))
+    #for i in range(len(sensors)):
+    values_to_write.append(deepcopy(wijminushij))
     for i in range(N):
         if not w[i] == 0:
             cwij[i]=[c_v[i][0]/(w[i]),c_v[i][1]/(w[i])]
@@ -409,8 +411,8 @@ for iteration in range(iterations):
     # voronoi_plot_2d(v,ax=r.axes)
     if brake_check:#and convergence of wij-hij:
         print("Simulation has ended due to brake checking movement of robots at iteration: ",iteration)
-        v=Voronoi(x_si.T)
-        voronoi_plot_2d(v,ax=r.axes)
+        # v=Voronoi(x_si.T)
+        # voronoi_plot_2d(v,ax=r.axes)
         sleep(10)
         break
     # Create safe control inputs (i.e., no collisions)
@@ -451,9 +453,9 @@ for iteration in range(iterations):
     r.step()
 
 print('w_i',wi1)
-print(x_si)
+#print(x_si)
 
-firstrow=["Iteration","Pose_x_y_Theta","Wij_sen1",'Wij_sen2',"Wij_minus_Hij_sen1",'Wij_minus_Hij_sen2',"Cwij","Distance_traveled_by_bot","Total_distance_traveled_by_all","H_Global_locational_Cost"]
+firstrow=["Iteration","Pose_x_y_Theta","Wij_sen1","Wij_minus_Hij_sen1","Cwij","Distance_traveled_by_bot","Total_distance_traveled_by_all","H_Global_locational_Cost"]
 with open('project_schneider.csv','w') as f1:
     writer=csv.writer(f1, delimiter=',',lineterminator='\n',)
     writer.writerow(firstrow)
@@ -462,3 +464,4 @@ with open('project_schneider.csv','w') as f1:
 
 
 
+2
