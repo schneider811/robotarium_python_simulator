@@ -48,7 +48,7 @@ def get_sensor(j,q):
 # numbots2=0
 # initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0],[0.2, -0.6, 0],[-0.75, -0.1, 0],[-1, 0, 0],[-0.8, -0.25, 0],[1.3, -0.4, 0]])
 
-scenario_num = 3
+scenario_num = 5
 
 #Scenario 1
 if scenario_num == 1:
@@ -66,9 +66,6 @@ if scenario_num == 1:
     gain=.2 #.1 gain causes HG to get pretty stable to be ~400
 
 #scenario 2
-#########################Scenario 2 as written in the paper is not working for my implementation. Something about the starting point for robot number 2 with a y starting location of 0 causes it to never get the minimum voronoi centroid distance. I changed the starting x location to 0#############################
-
-###MOST LIKELY DUE TO RESOLUTION
 
 if scenario_num == 2:
     N=10
@@ -100,7 +97,7 @@ if scenario_num == 3:
     n2=[6,7,8,9,10]
     hi1=[[1,2,0,0,0,0,0,0,0,0],[0,0,2,1,0,0,0,0,0,0],[0,0,0,0,1,2,0,0,0,0],[0,0,0,0,0,0,2,1,0,0],[0,0,0,0,0,0,0,0,1,2]]
     wi1=[[1,2,0,0,0,0,0,0,0,0],[0,0,2,1,0,0,0,0,0,0],[0,0,0,0,1,2,0,0,0,0],[0,0,0,0,0,0,2,1,0,0],[0,0,0,0,0,0,0,0,1,2]]
-    initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0],[0.2, -0.6, 0],[-0.75, -0.1, 0],[-1,0, 0],[-0.8, -0.25, 0],[1.3, -0.4, 0]])
+    initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0],[0.2, -0.6, 0],[-0.75, -0.1, 0],[-1,.4, 0],[-0.8, -0.25, 0],[1.3, -0.4, 0]])
 
 
 #scenario 4
@@ -178,11 +175,6 @@ font_height_points = determine_font_size(r,font_height_meters)
 count=0
 
 
-# for label_by_sensor in robot_by_sensor:
-#         count+=1
-#         sensor_label = r.axes.text(x[0,0],x[1,0]+0.25,label_by_sensor,fontsize=font_height_points, color='r',fontweight='bold',horizontalalignment='center',verticalalignment='center',zorder=0)
-#         x.append(sensor_label)
-
 robot_marker_size_m = 0.1
 
 wijminushij= [[0 for col in range(N)] for row in range(len(sensors))]
@@ -192,7 +184,6 @@ font_size = determine_font_size(r,0.05)
 line_width = 5
 robot_sensor_labels=[]
 for ii in range(x.shape[1]):
-    #sensor_label = r.axes.scatter(x[0,ii],x[1,ii]+0.25,robot_by_sensor[ii],fontsize=.1, color='r',fontweight='bold',horizontalalignment='center',verticalalignment='center',zorder=0)
     if robot_by_sensor[ii] == 1:
         robot_sensor_labels.append(r.axes.scatter(x[0,ii], x[1,ii], s=marker_size_robot, marker='o', facecolors='none',edgecolors='#ca2a2a',linewidth=line_width))
     if robot_by_sensor[ii] == 2:
@@ -208,9 +199,6 @@ robot_number_labels=[]
 for xx in range(x.shape[1]):
     robot_number_labels.append(r.axes.text(x[0,0],x[1,xx]+0.25,str(int(xx+1)),fontsize=font_size, color='r',fontweight='bold',horizontalalignment='center',verticalalignment='center',zorder=0))
 
-
-#robot_markers = [r.axes.scatter(x[0,ii], x[1,ii], s=marker_size_robot, marker='o', facecolors='none',edgecolors=CM[ii,:],linewidth=line_width) for ii in range(goal_points.shape[1])]
-
 r.step()
 weighted_mass= [[0 for col in range(3)] for row in range(N)]
 
@@ -218,6 +206,11 @@ all_values=[]
 distance_traveled=[0]*N
 old_traveled=[0]*N
 previous_x_si=x_si
+wijminushij1=[]
+wijminushij2=[]
+wijminushij3=[]
+wijminushij4=[]
+wijminushij5=[]
 
 iterations = 1000
 
@@ -236,21 +229,29 @@ for iteration in range(iterations):
         robot_sensor_labels[i].set_sizes([determine_marker_size(r, robot_marker_size_m)])
 
     if len(sensors) == 1: 
+        w = [0]*N
+        c_v= [[0 for col in range(3)] for row in range(N)]            
         for xi in np.arange(x_min_robotarium,x_max_robotarium,res):
                 for yi in np.arange(y_min_robotarium,y_max_robotarium,res):
                     sensor_value = 1
-                    distances = np.zeros((N))
-                    for robot in range(N):  
-                        distances[robot] =  (np.square(xi - x_si[0,robot]) + np.square(yi - x_si[1,robot]))-wi1[robot]
-                        # if not w[robot] == 0:
-                        #     hg += np.sqrt(np.square(x_si[0,robot]-(c_v[robot][0]/(w[robot]))) + np.square(x_si[1,i]-(c_v[robot][1]/(w[robot]) ) )) 
-                    min_index = np.argmin(distances)
-                    #print(min_index)
-                    #c_v is value for grid cell c_v=np.zeros(2,N)
-                    #w = np.zeros(N,1)
-                    c_v[min_index][0] += (xi * sensor_value)
-                    c_v[min_index][1] += (yi * sensor_value)
-                    w[min_index] += sensor_value
+     #               distances = np.zeros((len(sensors),N))
+                    for k in range(len(sensors)):
+                        distances = np.zeros((len(sensors),N))
+                        distances2=[0]*N
+                        for robot in range(N):
+                            if binary_robot_by_sensor[k][robot]==1:
+                                distances[k][robot] =  (np.square(xi - x_si[0,robot]) + np.square(yi - x_si[1,robot])) 
+                                distances2[robot] = (np.square(xi - x_si[0,robot]) + np.square(yi - x_si[1,robot])) 
+
+                        min_index = np.argmin(distances[k])
+                        # if min_index == 1:
+                        #     print(min_index)
+                        c_v[min_index][0] += (xi * sensor_value)
+                        c_v[min_index][1] += (yi * sensor_value)
+                        k2=np.argmin(distances2[distances2 != 0])
+                        density=get_sensor(1,[x_sample,y_sample])
+                        hg += .5*distances2[k2]*density
+                        w[min_index] += sensor_value
     
 #     #print(w)
     #print(w)
@@ -289,26 +290,14 @@ for iteration in range(iterations):
                         hg += .5*distances2[k2]*density
                         w[min_index] += sensor_value
 
-        #Equation 4 from paper 1 while calculating over weighted voronoi cell (lines 277-278)
-        # for xi in np.arange(x_min_robotarium,x_max_robotarium,res):
-        #     for yi in np.arange(y_min_robotarium,y_max_robotarium,res):
-        #             for k in range(len(sensors)):
-        #                 distances3=[0]*N
-        #                 for robot in range(N):
-        #                             if binary_robot_by_sensor[k][robot] == 1:
-        #                                 distances3[robot] = (np.square(xi - x_si[0,robot]) + np.square(yi - x_si[1,robot])) - wi1[k][robot]
-        #                         #    print(distances3)
-        #                 # mask = (distances3[:] > 0)
-        #                 k2=np.argmin(distances3[distances3 != 0])
-        #                 density=get_sensor(1,[x_sample,y_sample])
-        #                 hg += .5*distances3[k2]*density
+
 #LINES 279 swapped to 280
 #
 #
 #
 #
     #print(hg)
-    print(c_v[7][0],c_v[7][1])
+    # print(c_v[7][0],c_v[7][1])
 
     L=completeGL(N)
     #Equation 8 paper 2 is below, c_v is centroid of weighted voronoi
@@ -380,10 +369,10 @@ for iteration in range(iterations):
     # print("sum of nuym array 8",sum_of_neighbors_array[7])
     #print(wi1)
     ######################################normalize weight array SCENARIO 5#################################
-    for sensor in range(len(sensors)):
-         for robot in range(N):
-              if wi1[sensor][robot] <0:
-                   wi1[sensor][robot]=0
+    # for sensor in range(len(sensors)):
+    #      for robot in range(N):
+    #           if wi1[sensor][robot] <0:
+    #                wi1[sensor][robot]=0
 
     # for sensor in range(len(sensors)):
     #     wi1[sensor]=[float(i)/sum(wi1[sensor]) for i in wi1[sensor]]
@@ -400,6 +389,12 @@ for iteration in range(iterations):
     values_to_write.append(deepcopy(wi1))
     #for i in range(len(sensors)):
     values_to_write.append(deepcopy(wijminushij))
+
+    wijminushij1.append(deepcopy(wijminushij[0]))
+    wijminushij2.append(deepcopy(wijminushij[1]))
+    # wijminushij3.append(deepcopy(wijminushij[2]))
+    # wijminushij4.append(deepcopy(wijminushij[3]))
+    # wijminushij5.append(deepcopy(wijminushij[4]))
     for i in range(N):
         if not w[i] == 0:
             cwij[i]=[c_v[i][0]/(w[i]),c_v[i][1]/(w[i])]
@@ -413,7 +408,7 @@ for iteration in range(iterations):
         print("Simulation has ended due to brake checking movement of robots at iteration: ",iteration)
         # v=Voronoi(x_si.T)
         # voronoi_plot_2d(v,ax=r.axes)
-        sleep(10)
+        sleep(5)
         break
     # Create safe control inputs (i.e., no collisions)
     #dxi = si_barrier_cert(dxi, x_si)
@@ -454,14 +449,48 @@ for iteration in range(iterations):
 
 print('w_i',wi1)
 #print(x_si)
-
+# print(all_values)
 firstrow=["Iteration","Pose_x_y_Theta","Wij_sen1","Wij_minus_Hij_sen1","Cwij","Distance_traveled_by_bot","Total_distance_traveled_by_all","H_Global_locational_Cost"]
 with open('project_schneider.csv','w') as f1:
     writer=csv.writer(f1, delimiter=',',lineterminator='\n',)
     writer.writerow(firstrow)
     writer.writerows(all_values)
+#print(wijminushij1)
+# print(wijminushij2)
+# print(all_values)
+# with open('wij_minus_hij1.csv','w') as f2:
+#     writer=csv.writer(f2, delimiter=',',lineterminator='\n',)
+#     writer.writerow(['bot_1','bot_2','bot_3','bot_4','bot_5'])
+#     writer.writerows(wijminushij1)
+
+# with open('wij_minus_hij2.csv','w') as f2:
+#     writer=csv.writer(f2, delimiter=',',lineterminator='\n',)
+#     writer.writerow(['bot_6','bot_7','bot_8','bot_9','bot_10'])
+#     writer.writerows(wijminushij2)
+
+with open('wij_minus_hij1.csv','w') as f2:
+    writer=csv.writer(f2, delimiter=',',lineterminator='\n',)
+    writer.writerow(['bot_1','bot_2','bot_3'])
+    writer.writerows(wijminushij1)
+
+with open('wij_minus_hij2.csv','w') as f2:
+    writer=csv.writer(f2, delimiter=',',lineterminator='\n',)
+    writer.writerow(['bot_3','bot_4','bot_5'])
+    writer.writerows(wijminushij2)
+
+# with open('wij_minus_hij3.csv','w') as f2:
+#     writer=csv.writer(f2, delimiter=',',lineterminator='\n',)
+#     writer.writerow(['bot_5','bot_6'])
+#     writer.writerows(wijminushij3)
+
+# with open('wij_minus_hij4.csv','w') as f2:
+#     writer=csv.writer(f2, delimiter=',',lineterminator='\n',)
+#     writer.writerow(['bot_7','bot_8'])
+#     writer.writerows(wijminushij4)
+
+# with open('wij_minus_hij5.csv','w') as f2:
+#     writer=csv.writer(f2, delimiter=',',lineterminator='\n',)
+#     writer.writerow(['bot_9','bot_10'])
+#     writer.writerows(wijminushij5)
 
 
-
-
-2
