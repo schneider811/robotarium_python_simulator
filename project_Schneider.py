@@ -48,7 +48,7 @@ def get_sensor(j,q):
 # numbots2=0
 # initial_conditions = np.asarray([[1.25, 0.25, 0],[1, 0.5, 0],[1, -0.5, 0],[-1, -0.75, 0],[0.1, 0.2, 0],[0.2, -0.6, 0],[-0.75, -0.1, 0],[-1, 0, 0],[-0.8, -0.25, 0],[1.3, -0.4, 0]])
 
-scenario_num = 5
+scenario_num = 1
 
 #Scenario 1
 if scenario_num == 1:
@@ -228,43 +228,40 @@ for iteration in range(iterations):
         robot_number_labels[i].set_position([x_si[0,i],x_si[1,i]+0.15])
         robot_sensor_labels[i].set_sizes([determine_marker_size(r, robot_marker_size_m)])
 
-    if len(sensors) == 1: 
-        w = [0]*N
-        c_v= [[0 for col in range(3)] for row in range(N)]            
-        for xi in np.arange(x_min_robotarium,x_max_robotarium,res):
-                for yi in np.arange(y_min_robotarium,y_max_robotarium,res):
-                    sensor_value = 1
-     #               distances = np.zeros((len(sensors),N))
-                    for k in range(len(sensors)):
-                        distances = np.zeros((len(sensors),N))
-                        distances2=[0]*N
-                        for robot in range(N):
-                            if binary_robot_by_sensor[k][robot]==1:
-                                distances[k][robot] =  (np.square(xi - x_si[0,robot]) + np.square(yi - x_si[1,robot])) 
-                                distances2[robot] = (np.square(xi - x_si[0,robot]) + np.square(yi - x_si[1,robot])) 
+    # if len(sensors) == 1: 
+    #     w = [0]*N
+    #     c_v= [[0 for col in range(3)] for row in range(N)]            
+    #     for xi in np.arange(x_min_robotarium,x_max_robotarium,res):
+    #             for yi in np.arange(y_min_robotarium,y_max_robotarium,res):
+    #                 sensor_value = 1
+    #  #               distances = np.zeros((len(sensors),N))
+    #                 for k in range(len(sensors)):
+    #                     distances = np.zeros((len(sensors),N))
+    #                     distances2=[0]*N
+    #                     for robot in range(N):
+    #                         if binary_robot_by_sensor[k][robot]==1:
+    #                             distances[k][robot] =  (np.square(xi - x_si[0,robot]) + np.square(yi - x_si[1,robot])) 
+    #                             distances2[robot] = (np.square(xi - x_si[0,robot]) + np.square(yi - x_si[1,robot])) 
 
-                        min_index = np.argmin(distances[k])
-                        # if min_index == 1:
-                        #     print(min_index)
-                        c_v[min_index][0] += (xi * sensor_value)
-                        c_v[min_index][1] += (yi * sensor_value)
-                        k2=np.argmin(distances2[distances2 != 0])
-                        density=get_sensor(1,[x_sample,y_sample])
-                        hg += .5*distances2[k2]*density
-                        w[min_index] += sensor_value
+    #                     min_index = np.argmin(distances[k])
+    #                     # if min_index == 1:
+    #                     #     print(min_index)
+    #                     c_v[min_index][0] += (xi * sensor_value)
+    #                     c_v[min_index][1] += (yi * sensor_value)
+    #                     k2=np.argmin(distances2[distances2 != 0])
+    #                     density=get_sensor(1,[x_sample,y_sample])
+    #                     hg += .5*distances2[k2]*density
+    #                     w[min_index] += sensor_value
     
-#     #print(w)
-    #print(w)
+
     a=1
-    #L=completeGL(N)
-    #print(L)
-    #dxi = single_integrator_position_controller(x_si, c_v_array[:2][:])
+
     x_sample=0
     y_sample=0
-    #print(c_v)
+ 
     hg=0
 
-    if len(sensors) >1:
+    if len(sensors) >0:
         #for types in sensors:
         w = [0]*N
         c_v= [[0 for col in range(3)] for row in range(N)]            
@@ -291,14 +288,6 @@ for iteration in range(iterations):
                         w[min_index] += sensor_value
 
 
-#LINES 279 swapped to 280
-#
-#
-#
-#
-    #print(hg)
-    # print(c_v[7][0],c_v[7][1])
-
     L=completeGL(N)
     #Equation 8 paper 2 is below, c_v is centroid of weighted voronoi
     for robot in range(N):
@@ -310,8 +299,7 @@ for iteration in range(iterations):
         
         else:
             c_x = c_y = 0
-        # print("c_x",c_x)
-        # print("current_x",current_x)
+
         #Below is equation 8 from paper 2
         dxi[:,robot] = [a*(c_x - current_x), a*(c_y - current_y )] 
     brake_check = np.around(dxi,2)
@@ -320,32 +308,56 @@ for iteration in range(iterations):
     #Equation 14
     sum_of_neighbors_matrix= [[0 for col in range(len(sensors))] for row in range(N)]
 
-    weight_array =[0]*N
+    
+
+
+    #this weight array is for the commented method at line 337
+
     # #EQ 14 from PAPER 2
-    #updating the weights they do not converge to health
-    #print(w)
+
+    ### THIS IS NOT WORKING CORRECTLY. The weights do not converge to health they converge in an ever-increasing way and eventually go to a linear path suggesting they converge but not parallel to x axis but 
+
+    #this is the second method described in the paper I wrote this based off of the code you put in slack on march 16
+
+
+
+    ###METHOD ONE BELOW ALSO UNCOMMENT LINE 373
+    # ######this block performed better in terms of where the robots went but did not converge correctly
+    # weight_array =[0]*N
+    # for robot in range(N):
+    #     z=topological_neighbors(L,robot) 
+    #     for k in range(len(sensors)):
+    #         for neighbors in z:
+    #             sum_of_neighbors_matrix[robot][k]+=hi1[k][robot]-hi1[k][neighbors]
+    #     sum_of_neighbors_array=np.array(sum_of_neighbors_matrix, dtype=int)
+    #     if w[robot] == 0:
+    #         weight_array[robot]=np.array([0]*len(sensors),dtype=int)
+    #     if not w[robot] == 0:  
+    #         weight_array[robot]=(gain/(2*w[robot]))*sum_of_neighbors_array[robot]
+    #         #print(weight_array)
+    # #print(weight_array)
+    # weight_array=np.vstack(weight_array) #to make array not a list of arrays
+
+    ##METHOD 2 FROM REPORT
+    weight_array=[[0 for col in range(N)] for row in range(len(sensors))]
     for robot in range(N):
-        #sum_of_neighbors=0
         z=topological_neighbors(L,robot) 
-        #print(z)
         for k in range(len(sensors)):
             for neighbors in z:
-                #print(robots)
                 #print(k)
+                #print(robot)
                 #print(neighbors)
-                sum_of_neighbors_matrix[robot][k]+=hi1[k][robot]-hi1[k][neighbors]
-    #print(sum_of_neighbors)
-        sum_of_neighbors_array=np.array(sum_of_neighbors_matrix, dtype=int)
-        #print(w)
-        # if w[robots] == 0:
-        #     w[robots]=1
-        if w[robot] == 0:
-            weight_array[robot]=np.array([0]*len(sensors),dtype=int)
-        if not w[robot] == 0:  
-            weight_array[robot]=(gain/(2*w[robot]))*sum_of_neighbors_array[robot]
-            #print(weight_array)
-    #print(weight_array)
-    weight_array=np.vstack(weight_array) #to make array not a list of arrays
+                weight_array[k][robot]=weight_array[k][robot]-((wi1[k][robot]-wi1[k][neighbors])-(hi1[k][robot]-hi1[k][neighbors])) ##The error in scenario 2 is something to do with wi1[k][robot]
+        #sum_of_neighbors_array=np.array(sum_of_neighbors_matrix, dtype=int)
+
+        for k in range(len(sensors)):
+            if w[robot] == 0:
+                weight_array[robot]=np.array([0]*len(sensors),dtype=int)            
+            if not w[robot] == 0:  
+                wi1[k][robot]+=(gain/(w[robot]))*weight_array[k][robot]
+    # #         #print(weight_array)
+
+
     #print(weight_array)
     # print("w8",w[8])
     # print("sum of nuym array 8",sum_of_neighbors_array[8])
@@ -359,39 +371,23 @@ for iteration in range(iterations):
     
     for sensors_num in range(len(sensors)):
         for robot in range(N):
-            # if weight_array[robot][sensors_num]<0:
-            #     wi1[sensors_num][robot] = 0
-            # else:
-                wi1[sensors_num][robot] = wi1[sensors_num][robot]+ weight_array[robot][sensors_num]
+                #wi1[sensors_num][robot] = wi1[sensors_num][robot]+ weight_array[robot][sensors_num]
                 wijminushij[sensors_num][robot]=wi1[sensors_num][robot]-hi1[sensors_num][robot]
     #print(sum_of_neighbors_array)
     # print("w8",w[7])
     # print("sum of nuym array 8",sum_of_neighbors_array[7])
     #print(wi1)
-    ######################################normalize weight array SCENARIO 5#################################
-    # for sensor in range(len(sensors)):
-    #      for robot in range(N):
-    #           if wi1[sensor][robot] <0:
-    #                wi1[sensor][robot]=0
-
-    # for sensor in range(len(sensors)):
-    #     wi1[sensor]=[float(i)/sum(wi1[sensor]) for i in wi1[sensor]]
-    #
-    #
-    #
-    #
-    #
-    #
+  
     cwij=[0]*N
-    
+    #print(wijminushij)
     #print('wi1 after changing',wi1)
     # for i in range(len(sensors)):
     values_to_write.append(deepcopy(wi1))
     #for i in range(len(sensors)):
     values_to_write.append(deepcopy(wijminushij))
 
-    wijminushij1.append(deepcopy(wijminushij[0]))
-    wijminushij2.append(deepcopy(wijminushij[1]))
+    # wijminushij1.append(deepcopy(wijminushij[0]))
+    # wijminushij2.append(deepcopy(wijminushij[1]))
     # wijminushij3.append(deepcopy(wijminushij[2]))
     # wijminushij4.append(deepcopy(wijminushij[3]))
     # wijminushij5.append(deepcopy(wijminushij[4]))
@@ -401,36 +397,23 @@ for iteration in range(iterations):
     values_to_write.append(cwij)
     #print(values_to_write)
     
-    #print(wi1)
-    # v=Voronoi(x_si.T)
-    # voronoi_plot_2d(v,ax=r.axes)
-    if brake_check:#and convergence of wij-hij:
-        print("Simulation has ended due to brake checking movement of robots at iteration: ",iteration)
-        # v=Voronoi(x_si.T)
-        # voronoi_plot_2d(v,ax=r.axes)
-        sleep(5)
-        break
+    # if brake_check:#and convergence of wij-hij:
+    #     print("Simulation has ended due to brake checking movement of robots at iteration: ",iteration)
+    #     #For some reason this does not add the voronoi to the graph though if i do it outside this loop it will overlay the voronoi on the robotarium graph.
+    #     #Do not have enough time to get voronoi to display properly.
+    #     # v=Voronoi(x_si.T)
+    #     # voronoi_plot_2d(v,ax=r.axes)
+    #     sleep(5)
+    #     break
     # Create safe control inputs (i.e., no collisions)
     #dxi = si_barrier_cert(dxi, x_si)
     if iterations == 999:
          print("Simulation has ended due to hitting 1,000 iterations")
+         sleep(5)
     # Transform single integrator velocity commands to unicycle
     dxu = si_to_uni_dyn(dxi, x)
     for i in range(N):
         distance_traveled[i]+=np.linalg.norm((x_si[:,i])-(previous_x_si[:,i]))
-
-    #Why is this distance traveled working so poorly?
-    #
-    #
-    #
-    #
-
-    #print(distance_traveled)
-    #old_traveled=distance_traveled
-    
-
-    #this print debug statement is working as I would hope it would work but writing the distance traveled to values_to_write only is writing the total distance traveled for each
-    # print(distance_traveled)
 
     values_to_write.append(distance_traveled[:])
 
@@ -447,35 +430,34 @@ for iteration in range(iterations):
     # Iterate the simulation
     r.step()
 
-print('w_i',wi1)
-#print(x_si)
-# print(all_values)
+#below is the code i used to create the CSV and graph what i could. I did not have enough time to get all of the graphs for all of the robots.
+
 firstrow=["Iteration","Pose_x_y_Theta","Wij_sen1","Wij_minus_Hij_sen1","Cwij","Distance_traveled_by_bot","Total_distance_traveled_by_all","H_Global_locational_Cost"]
 with open('project_schneider.csv','w') as f1:
     writer=csv.writer(f1, delimiter=',',lineterminator='\n',)
     writer.writerow(firstrow)
     writer.writerows(all_values)
-#print(wijminushij1)
-# print(wijminushij2)
-# print(all_values)
-# with open('wij_minus_hij1.csv','w') as f2:
-#     writer=csv.writer(f2, delimiter=',',lineterminator='\n',)
-#     writer.writerow(['bot_1','bot_2','bot_3','bot_4','bot_5'])
-#     writer.writerows(wijminushij1)
+# #print(wijminushij1)
+# # print(wijminushij2)
+# # print(all_values)
+# # with open('wij_minus_hij1.csv','w') as f2:
+# #     writer=csv.writer(f2, delimiter=',',lineterminator='\n',)
+# #     writer.writerow(['bot_1','bot_2','bot_3','bot_4','bot_5'])
+# #     writer.writerows(wijminushij1)
 
-# with open('wij_minus_hij2.csv','w') as f2:
-#     writer=csv.writer(f2, delimiter=',',lineterminator='\n',)
-#     writer.writerow(['bot_6','bot_7','bot_8','bot_9','bot_10'])
-#     writer.writerows(wijminushij2)
+# # with open('wij_minus_hij2.csv','w') as f2:
+# #     writer=csv.writer(f2, delimiter=',',lineterminator='\n',)
+# #     writer.writerow(['bot_6','bot_7','bot_8','bot_9','bot_10'])
+# #     writer.writerows(wijminushij2)
 
 with open('wij_minus_hij1.csv','w') as f2:
     writer=csv.writer(f2, delimiter=',',lineterminator='\n',)
-    writer.writerow(['bot_1','bot_2','bot_3'])
+    writer.writerow(['bot_1','bot_2'])
     writer.writerows(wijminushij1)
 
 with open('wij_minus_hij2.csv','w') as f2:
     writer=csv.writer(f2, delimiter=',',lineterminator='\n',)
-    writer.writerow(['bot_3','bot_4','bot_5'])
+    writer.writerow(['bot_3','bot_4'])
     writer.writerows(wijminushij2)
 
 # with open('wij_minus_hij3.csv','w') as f2:
